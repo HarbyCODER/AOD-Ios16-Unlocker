@@ -7,19 +7,23 @@ static BOOL AODUnlockIsCapability(CFStringRef question) {
            CFStringCompare(question, CFSTR("DeviceSupportsAlwaysOnDisplay"), 0) == kCFCompareEqualTo;
 }
 
+%group MGGetBoolAnswerGroup
 %hookf(BOOL, MGGetBoolAnswer, CFStringRef question) {
     if (AODUnlockIsCapability(question)) return YES;
     return %orig(question);
 }
+%end
 
+%group MGCopyAnswerGroup
 %hookf(CFTypeRef, MGCopyAnswer, CFStringRef question) {
     if (AODUnlockIsCapability(question)) return CFRetain(kCFBooleanTrue);
     return %orig(question);
 }
+%end
 
 %ctor {
     void *getBoolAnswer = MSFindSymbol(NULL, "_MGGetBoolAnswer");
     void *copyAnswer = MSFindSymbol(NULL, "_MGCopyAnswer");
-    if (getBoolAnswer) %init(MGGetBoolAnswer = getBoolAnswer);
-    if (copyAnswer) %init(MGCopyAnswer = copyAnswer);
+    if (getBoolAnswer) %init(MGGetBoolAnswerGroup, MGGetBoolAnswer = getBoolAnswer);
+    if (copyAnswer) %init(MGCopyAnswerGroup, MGCopyAnswer = copyAnswer);
 }
