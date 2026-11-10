@@ -23,9 +23,11 @@ jobs:
       - name: Install RootHide Theos and iOS SDK
         shell: bash
         run: |
-          git clone --recursive https://github.com/roothide/theos.git "$RUNNER_TEMP/theos"
-          echo "THEOS=$RUNNER_TEMP/theos" >> "$GITHUB_ENV"
-          "$RUNNER_TEMP/theos/bin/install-sdk" latest
+          THEOS="$RUNNER_TEMP/theos"
+          git clone --recursive https://github.com/roothide/theos.git "$THEOS"
+          echo "THEOS=$THEOS" >> "$GITHUB_ENV"
+          export THEOS
+          "$THEOS/bin/install-sdk" latest
 
       - name: Build RootHide package
         run: make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide
