@@ -1,0 +1,39 @@
+name: Build RootHide DEB
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "Makefile"
+      - "control"
+      - "Tweak.xm"
+      - "AODUnlock.plist"
+      - ".github/workflows/build-deb.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Check out tweak source
+        uses: actions/checkout@v4
+
+      - name: Install RootHide Theos and iOS SDK
+        shell: bash
+        run: |
+          git clone --recursive https://github.com/roothide/theos.git "$RUNNER_TEMP/theos"
+          echo "THEOS=$RUNNER_TEMP/theos" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/theos/bin/install-sdk" latest
+
+      - name: Build RootHide package
+        run: make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide
+
+      - name: Upload DEB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AODUnlock-roothide-deb
+          path: packages/*.deb
+          if-no-files-found: error
+          retention-days: 30
