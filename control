@@ -1,0 +1,9 @@
+Package: com.dung.aodunlock
+Name: AODUnlock
+Version: 0.2.0
+Architecture: iphoneos-arm64e
+Description: Exposes the native Always-On Display capability on iOS 16.
+Maintainer: Dung
+Author: Dung
+Section: Tweaks
+Depends: firmware (>= 16.0), mobilesubstrate (>= 0.9.5000)
