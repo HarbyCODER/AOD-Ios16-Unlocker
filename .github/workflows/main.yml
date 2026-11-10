@@ -31,6 +31,9 @@ jobs:
           export THEOS
           "$THEOS/bin/install-sdk" latest
 
+      - name: Install ldid
+        run: brew install ldid
+
       - name: Build RootHide package
         run: make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide
 
